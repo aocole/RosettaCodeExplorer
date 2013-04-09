@@ -1,0 +1,26 @@
+{
+   "store" : {
+      "contact" : "Stackato Support <stackato-support@activestate.com>",
+      "icon" : "activestate.png",
+      "icons" : "http://get.stackato.com/store/icon/",
+      "title" : "PairUp!"
+    },
+    "apps" : [
+        {
+           "branch" : "stackato",
+           "desc" : "Pair Programming Station App for Stackato",
+           "framework" : "generic",
+           "home" : "https://github.com/Stackato-Apps/pairup#readme",
+           "icon" : "pairup.png",
+           "id" : "pairup",
+           "license" : "MPL",
+           "mem" : "128",
+           "name" : "PairUp!",
+           "repo" : "git://github.com/Stackato-Apps/pairup",
+           "services" : {
+              "filesystem" : "pairup"
+           }
+        }
+    ]
+}
+
