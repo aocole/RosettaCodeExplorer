@@ -1,0 +1,5 @@
+<ul>
+	<%@files.each do |file|%>
+		<li><a href="<%=file%>"><%=File.basename file%></a></li>
+	<%end%>
+</ul>
