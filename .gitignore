@@ -4,3 +4,4 @@
 manifest.yml
 conf/
 RosettaCode/
+vendor/cache/

@@ -8,8 +8,8 @@ configure do
   set :public_folder, ROSETTA
 end
 
+require 'rdiscount'
 get '/?' do
-  require 'rdiscount'
   if File.exist?(settings.public_folder + '/README.md')
     markdown :README, :views => settings.public_folder, :layout_engine => :erb
   else
@@ -53,7 +53,14 @@ def tasks
       File.basename(name)
     end
   end.sort
-end  
+end
+
+require 'wikicloth'
+def task_desc(task)
+  text = File.read File.join(ROSETTA, 'Task', task, '0DESCRIPTION')
+  wiki = WikiCloth::Parser.new({:data => text})
+  wiki.to_html
+end
 
 def table
   erb :table
