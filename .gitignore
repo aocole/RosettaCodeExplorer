@@ -1,7 +1,6 @@
 .vim/
 .viminfo
 .bash_history
-pairup-conf.sh
 manifest.yml
 conf/
-pair/
+RosettaCode/
