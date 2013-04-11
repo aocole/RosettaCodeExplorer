@@ -33,8 +33,9 @@ tbody th {
     <table id="matrix_table" class="table table-bordered">
         <thead>
             <tr>
-                <%(['']+langs).each do |lang|%>
-                    <th style="vertical-align:bottom;"><div class="sized rotate"><%=lang['name']%></div></th>
+                <th></th>
+                <%(langs).each do |lang|%>
+                    <th style="vertical-align:bottom;"><div class="sized rotate"><%=lang['name'].gsub(' ', '&nbsp;')%></div></th>
                 <%end%>
             </tr>
         </thead>
@@ -77,8 +78,6 @@ tbody th {
                     langs.each_with_index do |l,i|
                         unless major_langs.include?(l)
                             non_major_indices << (i + 1) # offset one because of the first column
-                        else
-                            puts "#{l['name']} is popular at index #{i}"
                         end
                     end
                 %>

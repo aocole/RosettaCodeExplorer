@@ -11,14 +11,11 @@ get '/?' do
 end
 
 get '/Lang/:lang/:task.:format' do
-  puts "format is #{params[:format].inspect}"
   if params[:format] == 'json'
-    puts "JSON format"
     layout false
     headers['Content-Type'] = 'application/json'
     load_samples(params[:lang], params[:task]).to_json
   else
-    puts "plain format"
     @files = Dir.glob(ROSETTA + '/' + File.join('Lang', params[:lang], params[:task], '*')).collect{|f|f.sub(/^#{ROSETTA}/,'')}.sort
     erb :language_task
   end
