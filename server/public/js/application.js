@@ -30,3 +30,9 @@ RCI.insert_code = function(lang, task, samples) {
 	}
 }
 
+RCI.set_lang_visibility = function(lang_index, visible) {
+    var table = $('#matrix_table').dataTable();
+    table.fnSetColumnVis(lang_index, visible);
+    return visible;
+}
+

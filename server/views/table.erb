@@ -30,6 +30,24 @@ tbody th {
 
 <div class="row" id="matrix">
     <h2>Matrix of Languages and Tasks</h2>
+
+    <div class="row"><%langs.each_with_index do |lang, i|%>
+        <div class="span2">
+            <label class="checkbox">
+                <input 
+                    type="checkbox" 
+                    class="lang_checkbox" 
+                    <%if major_langs.include?(lang)%>checked="checked"<%end%>
+                    data-lang-index="<%=i+1%>"> <%= lang['name'].gsub(' ', '&nbsp;') %>
+            </label>
+        </div>
+        <% new_row = ((i+1) % 6).zero? %>
+        <% if new_row %>
+            </div>
+            <div class="row">
+        <%end%>
+    <%end%></div>
+
     <table id="matrix_table" class="table table-bordered">
         <thead>
             <tr>
@@ -45,7 +63,7 @@ tbody th {
                     <th><a href="http://rosettacode.org/wiki/<%=task['url']%>"><%=task['name']%></a></th>
                     <%langs.each do |lang|%>
                         <td>
-                            <a href="<%="/"+['Lang', lang['url'], task['url'] + '.html'].join('/')%>" data-lang="<%=lang['url']%>" data-task="<%=task['url']%>" class="code_link">
+                            <a href="<%="/"+['Lang', lang['path'], task['path'] + '.html'].join('/')%>" data-lang="<%=lang['path']%>" data-task="<%=task['path']%>" class="code_link">
                                 <%=
                                     num = Dir.glob([ROSETTA, 'Lang', lang['path'], task['path'], '*'].join('/')).size
                                     num.zero? ? '' : num
