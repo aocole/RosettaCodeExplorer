@@ -1,58 +1,39 @@
 #!/usr/bin/env ruby19
 require 'sinatra'
+require 'json'
 
 HOME = File.realpath(File.dirname(__FILE__) + '/..')
 ROSETTA = HOME + '/RosettaCode'
 
-configure do
-  set :public_folder, ROSETTA
-end
-
 require 'rdiscount'
 get '/?' do
-  if File.exist?(settings.public_folder + '/README.md')
-    markdown :README, :views => settings.public_folder, :layout_engine => :erb
+  table
+end
+
+get '/Lang/:lang/:task.:format' do
+  puts "format is #{params[:format].inspect}"
+  if params[:format] == 'json'
+    puts "JSON format"
+    layout false
+    headers['Content-Type'] = 'application/json'
+    load_samples(params[:lang], params[:task]).to_json
   else
-    ''
-  end + table
-end
-
-get '/Lang/:lang/:task' do
-  @files = Dir.glob(ROSETTA + '/' + File.join('Lang', params[:lang], params[:task], '*')).collect{|f|f.sub(/^#{ROSETTA}/,'')}.sort
-  erb :language_task
-end
-
-template :layout do
-<<TEMPLATE
-  <!DOCTYPE html>
-  <html>
-  <head>
-    <title>Rosetta Code Interactive</title>
-    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
-  </head>
-  <body>
-    <div class="container">
-      <%=yield%> <br/>
-    </div>
-  </body>
-  </html>
-TEMPLATE
+    puts "plain format"
+    @files = Dir.glob(ROSETTA + '/' + File.join('Lang', params[:lang], params[:task], '*')).collect{|f|f.sub(/^#{ROSETTA}/,'')}.sort
+    erb :language_task
+  end
 end
 
 def langs
   @langs ||= begin
-    Dir.glob(ROSETTA + '/Lang/*/').collect do |name|
-      File.basename name
-    end
-  end.sort
+    YAML.load_file(File.join(ROSETTA, 'Meta', 'Lang.yaml')).values
+  end
 end
 
 def tasks
   @tasks ||= begin
-    Dir.glob(ROSETTA + '/Task/*/').collect do |name|
-      File.basename(name)
-    end
-  end.sort
+    YAML.load_file(File.join(ROSETTA, 'Meta', 'Task.yaml')).values
+  end
 end
 
 require 'wikicloth'
@@ -65,3 +46,19 @@ end
 def table
   erb :table
 end 
+
+def readme
+  filename = File.join(ROSETTA, 'README.md')
+  if File.exist?(filename)
+    markdown File.read(filename)
+  else
+    ''
+  end
+end
+
+def load_samples(lang, task)
+  filenames = Dir.glob(File.join(ROSETTA, 'Lang', lang, task, '*'))
+  samples = filenames.collect do |filename|
+    File.read filename
+  end
+end

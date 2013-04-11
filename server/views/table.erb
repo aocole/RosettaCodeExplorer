@@ -1,3 +1,7 @@
+<div class="row" id="intro">
+    <%= readme %>
+</div>
+
 <style type="text/css">
 .rotate {
   -webkit-transform: rotate(-90deg);
@@ -13,37 +17,68 @@
   transform-origin: 0% 0%;
 }
 .sized {
-    width:  1em;
-    height: 10em;
+    width:  2em;
+    height: 15em;
     position:relative;
     top: 10em;
     left:0em;
 }
+tbody th {
+    width: 20em;
+}
 </style>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <%(['']+langs).each do |lang|%>
-                <th style="vertical-align:bottom;"><div class="sized rotate"><a href="http://rosettacode.org/wiki/Category:<%=lang%>"><%=lang%></a></div></th>
-            <%end%>
-        </tr>
-    </thead>
-    <tbody>
-        <%tasks.each do |task|%>
+<div class="row" id="matrix">
+    <h2>Matrix of Languages and Tasks</h2>
+    <table id="matrix_table" class="table table-bordered">
+        <thead>
             <tr>
-                <th><a href="http://rosettacode.org/wiki/<%=task%>"><%=task.gsub('_', '&nbsp;')%></a></th>
-                <%langs.each do |lang|%>
-                    <td>
-                        <a href="<%="/"+['Lang', lang, task].join('/')%>">
-                            <%=
-                                num = Dir.glob([ROSETTA, 'Lang', lang, task, '*'].join('/')).size
-                                num.zero? ? '' : num
-                            %>
-                        </a>
-                    </td>
+                <%(['']+langs).each do |lang|%>
+                    <th style="vertical-align:bottom;"><div class="sized rotate"><%=lang['name']%></div></th>
                 <%end%>
             </tr>
-        <%end%>
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            <%tasks.each do |task|%>
+                <tr>
+                    <th><a href="http://rosettacode.org/wiki/<%=task['url']%>"><%=task['name']%></a></th>
+                    <%langs.each do |lang|%>
+                        <td>
+                            <a href="<%="/"+['Lang', lang['url'], task['url'] + '.html'].join('/')%>" data-lang="<%=lang['url']%>" data-task="<%=task['url']%>" class="code_link">
+                                <%=
+                                    num = Dir.glob([ROSETTA, 'Lang', lang['path'], task['path'], '*'].join('/')).size
+                                    num.zero? ? '' : num
+                                %>
+                            </a>
+                        </td>
+                    <%end%>
+                </tr>
+            <%end%>
+        </tbody>
+    </table>
+</div>
+
+<div class="row" id="code">
+    <h2>Code Samples</h2>
+</div>
+
+<script type="text/javascript">
+    $().ready(function() {
+        $('#matrix_table').dataTable({
+            "bPaginate": false,
+            "bLengthChange": false,
+            "bFilter": true,
+            "bSort": true,
+            "bInfo": false,
+            "bAutoWidth": false
+        });
+        $('.code_link').click(function(event) {
+            event.preventDefault();
+            var el = $(this);
+            var lang = el.attr('data-lang');
+            var task = el.attr('data-task');
+
+            RCI.load_code(lang, task);
+        });
+    });
+</script>
