@@ -30,6 +30,24 @@ def langs
   end
 end
 
+def major_langs
+  @top_langs ||= begin
+    langs.each do |lang|
+      lang['size'] = Dir.entries(File.join(ROSETTA, 'Lang', lang['path'])).size - 2
+    end
+    langs.sort{|a,b|b['size'] <=> a['size']}[0..19]
+  end
+end
+
+def major_tasks
+  @top_tasks ||= begin
+    tasks.each do |task|
+      task['size'] = Dir.entries(File.join(ROSETTA, 'Task', task['path'])).size - 2
+    end
+    tasks.sort{|a,b|b['size'] <=> a['size']}[0..19]
+  end
+end
+
 def tasks
   @tasks ||= begin
     YAML.load_file(File.join(ROSETTA, 'Meta', 'Task.yaml')).values

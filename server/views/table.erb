@@ -39,7 +39,7 @@ tbody th {
             </tr>
         </thead>
         <tbody>
-            <%tasks.each do |task|%>
+            <%major_tasks.each do |task|%>
                 <tr>
                     <th><a href="http://rosettacode.org/wiki/<%=task['url']%>"><%=task['name']%></a></th>
                     <%langs.each do |lang|%>
@@ -70,7 +70,20 @@ tbody th {
             "bFilter": true,
             "bSort": true,
             "bInfo": false,
-            "bAutoWidth": false
+            "bAutoWidth": false,
+            "aoColumnDefs": [
+                <% 
+                    non_major_indices = [] 
+                    langs.each_with_index do |l,i|
+                        unless major_langs.include?(l)
+                            non_major_indices << (i + 1) # offset one because of the first column
+                        else
+                            puts "#{l['name']} is popular at index #{i}"
+                        end
+                    end
+                %>
+                {"bVisible": false, "aTargets": <%=non_major_indices.to_json%>}
+            ]
         });
         $('.code_link').click(function(event) {
             event.preventDefault();
