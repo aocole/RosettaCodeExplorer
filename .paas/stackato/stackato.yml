@@ -1,25 +1,21 @@
-# SNUSP Sandbox. A playground for your favorite esoteric language.
-name: rosetta-code-interactive
+name: rosetta-code-explorer
 
-# No framework needed. We just want the container's unix environment.
 framework:
   type: sinatra
   runtime: ruby19
 
-# Needed by stackato 1.2. Container needs to respond to web request to appear
-# alive. We serve the README file, since it is already available.
 processes:
-  web: ruby server/rosetta-code-interactive.rb -p $PORT #-o ${name}${target-base}
+  web: ruby server/rosetta-code-explorer.rb -p $PORT #-o ${name}${target-base}
 
 # Good to have lots of memory. Low memory seems to cause apt-get failures.
-mem: 256M
+mem: 32M
 
 # This shared fs is useful for keeping stuff you don't want to lose, like your
 # code repositories.
 services:
   ${name}-fs: filesystem
 
-# This allows the .git/ directory to get pushed. Good for hacking on 'rosetta-code-interactive'
+# This allows the .git/ directory to get pushed. Good for hacking on 'rosetta-code-explorer'
 # itself.
 ignores: []
 

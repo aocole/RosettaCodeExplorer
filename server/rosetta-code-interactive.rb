@@ -21,6 +21,18 @@ get '/Lang/:lang/:task.:format' do
   end
 end
 
+get '/js/minor_tasks.js' do
+  minor_tasks = tasks - major_tasks
+  json = "RCI.minor_tasks = " << minor_tasks.collect do |task|
+    task['counts'] = langs.collect do |lang|
+      num_samples(lang, task)
+    end
+    task
+  end.to_json
+  headers['Content-Type'] = 'text/javascript'
+  return json
+end
+
 def langs
   @langs ||= begin
     YAML.load_file(File.join(ROSETTA, 'Meta', 'Lang.yaml')).values
@@ -76,4 +88,8 @@ def load_samples(lang, task)
   samples = filenames.collect do |filename|
     File.read filename
   end
+end
+
+def num_samples(lang, task)
+  Dir.glob([ROSETTA, 'Lang', lang['path'], task['path'], '*'].join('/')).size
 end

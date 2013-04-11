@@ -36,3 +36,9 @@ RCI.set_lang_visibility = function(lang_index, visible) {
     return visible;
 }
 
+RCI.set_task_visibility = function(task_index, visible) {
+    var table = $('#matrix_table').dataTable();
+    table.fnSetColumnVis(lang_index, visible);
+    return visible;
+}
+
