@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby19
 require 'sinatra'
 require 'json'
+require_relative 'lib/my_wikicloth'
 
 HOME = File.realpath(File.dirname(__FILE__) + '/..')
 ROSETTA = HOME + '/RosettaCode'
@@ -41,6 +42,10 @@ get '/js/minor_tasks.js' do
   return json
 end
 
+get '/info/:type/:name' do
+  info params[:type], params[:name]
+end
+
 def langs
   @langs ||= begin
     YAML.load_file(File.join(ROSETTA, 'Meta', 'Lang.yaml')).values
@@ -71,10 +76,13 @@ def tasks
   end
 end
 
-require 'wikicloth'
-def task_desc(task)
-  text = File.read File.join(ROSETTA, 'Task', task, '0DESCRIPTION')
-  wiki = WikiCloth::Parser.new({:data => text})
+def info(type, name)
+  text = File.read File.join(ROSETTA, type, name, '00DESCRIPTION')
+  wiki = WikiCloth::Parser.new({
+    :link_handler => CustomLinkHandler.new,
+    :data => text,
+    :noedit => true
+  })
   wiki.to_html
 end
 

@@ -58,14 +58,24 @@
           <tr>
             <th></th>
             <%(langs).each do |lang|%>
-            <th style="vertical-align:bottom;"><div class="sized rotate"><a href="http://rosettacode.org/wiki/Category:<%=lang['url']%>"><%=lang['name'].gsub(' ', '&nbsp;')%></a></div></th>
+            <th style="vertical-align:bottom;">
+              <div class="sized rotate">
+                <a href="http://rosettacode.org/wiki/Category:<%=lang['url']%>" class="info_link" data-type="Lang" data-name="<%=lang['path']%>">
+                  <%=lang['name'].gsub(' ', '&nbsp;')%>
+                </a>
+              </div>
+            </th>
             <%end%>
           </tr>
         </thead>
         <tbody>
           <%major_tasks.each do |task|%>
           <tr>
-            <th><a href="http://rosettacode.org/wiki/<%=task['url']%>"><%=task['name']%></a></th>
+            <th>
+              <a href="http://rosettacode.org/wiki/<%=task['url']%>" class="info_link" data-type="Task" data-name="<%=task['path']%>">
+                <%=task['name']%>
+              </a>
+            </th>
             <%langs.each do |lang|%>
             <td>
               <% num = num_samples(lang, task) %>
@@ -139,5 +149,31 @@
       var el = $(this);
       el.parent().remove();
     });
+
+    $('.info_link').click(function(event){
+      event.preventDefault();
+      var el = $(this);
+      var name = el.attr('data-name');
+      var type = el.attr('data-type');
+      $('#modal_title').text(el.text());
+      $('#modal').modal({
+        remote: "/info/" + type + '/' + name
+      });
+    });
+
+    $('#modal').on('hidden', function() {
+      $(this).removeData('modal');
+    });
+
   });
 </script>
+<div id="modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-header">
+    <h3 id="modal_title">Description</h3>
+  </div>
+  <div class="modal-body">
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+  </div>
+</div>
