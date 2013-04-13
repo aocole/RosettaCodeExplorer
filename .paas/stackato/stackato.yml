@@ -7,7 +7,7 @@ framework:
 processes:
   web: ruby server/rosetta-code-interactive.rb -p $PORT #-o ${name}${target-base}
 
-mem: 32M
+mem: 128M
 
 # This allows the .git/ directory to get pushed. Good for hacking on 'rosetta-code-explorer'
 # itself.
