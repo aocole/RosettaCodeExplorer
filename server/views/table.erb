@@ -1,168 +1,143 @@
-<div class="row" id="intro">
-    <%= readme %>
-</div>
-
-<style type="text/css">
-.rotate {
-  -webkit-transform: rotate(-90deg);
-  -moz-transform: rotate(-90deg);
-  -ms-transform: rotate(-90deg);
-  -o-transform: rotate(-90deg);
-  transform: rotate(-90deg);
-
-  -webkit-transform-origin: 0% 00%;
-  -moz-transform-origin: 0% 0%;
-  -ms-transform-origin: 0% 0%;
-  -o-transform-origin: 0% 0%;
-  transform-origin: 0% 0%;
-}
-.sized {
-    width:  2em;
-    height: 15em;
-    position:relative;
-    top: 10em;
-    left:0em;
-}
-
-.dropdown .dropdown-panel {
-    max-width: 100%;
-    max-height: 400px;
-    overflow-x: hidden;
-    overflow-y: scroll;
-}
-
-tbody th {
-    width: 20em;
-}
-</style>
-
 <div class="row" id="matrix">
-    <h2>Matrix of Languages and Tasks</h2>
 
-    <!-- Languages drop-down -->
-    <a class="btn btn-large dropdown-toggle" data-dropdown="#langs-drop" href="#">
-        Select Languages
-        <span class="caret"></span>
-    </a>
-    <div id="langs-drop" class="dropdown">
-        <div class="dropdown-panel">
-            <div class="row"><%langs.each_with_index do |lang, i|%>
-                <div class="span2">
-                    <label class="checkbox">
-                        <input 
-                            type="checkbox" 
-                            class="lang_checkbox" 
-                            <%if major_langs.include?(lang)%>checked="checked"<%end%>
-                            data-lang-index="<%=i+1%>"> <%= lang['name'].gsub(' ', '&nbsp;') %>
-                    </label>
-                </div>
-                <% new_row = ((i+1) % 6).zero? %>
-                <% if new_row %>
-                    </div>
-                    <div class="row">
-                <%end%>
-            <%end%></div>
+  <!-- Languages drop-down -->
+  <a class="btn btn-large dropdown-toggle" data-dropdown="#langs-drop" href="#">
+    Select Languages
+    <span class="caret"></span>
+  </a>
+  <div id="langs-drop" class="dropdown">
+    <div class="dropdown-panel">
+      <div class="row"><%langs.each_with_index do |lang, i|%>
+        <div class="span2">
+          <label class="checkbox">
+            <input 
+            type="checkbox" 
+            class="lang_checkbox" 
+            <%if major_langs.include?(lang)%>checked="checked"<%end%>
+            data-lang-index="<%=i+1%>"> <%= lang['name'].gsub(' ', '&nbsp;') %>
+          </label>
         </div>
+        <% new_row = ((i+1) % 6).zero? %>
+        <% if new_row %>
+      </div>
+      <div class="row">
+        <%end%>
+        <%end%></div>
+      </div>
     </div>
 
     
     <!-- Tasks drop-down -->
     <a class="btn btn-large dropdown-toggle" data-dropdown="#tasks-drop" data-horizontal-offset="-200" href="#">
-        Select Tasks
-        <span class="caret"></span>
+      Select Tasks
+      <span class="caret"></span>
     </a>
     <div id="tasks-drop" class="dropdown">
-        <div class="dropdown-panel">
-            <div class="row"><%tasks.each_with_index do |task, i|%>
-                <div class="span2">
-                    <label class="checkbox">
-                        <input 
-                            type="checkbox" 
-                            class="task_checkbox" 
-                            <%if major_tasks.include?(task)%>checked="checked"<%end%>
-                            data-task-index="<%=i+1%>"> <%= task['name'] %>
-                    </label>
-                </div>
-                <% new_row = ((i+1) % 6).zero? %>
-                <% if new_row %>
-                    </div>
-                    <div class="row">
-                <%end%>
-            <%end%></div>
+      <div class="dropdown-panel">
+        <div class="row"><%tasks.each_with_index do |task, i|%>
+          <div class="span2">
+            <label class="checkbox">
+              <input 
+              type="checkbox" 
+              class="task_checkbox" 
+              <%if major_tasks.include?(task)%>checked="checked"<%end%>
+              data-task-index="<%=i+1%>"> <%= task['name'] %>
+            </label>
+          </div>
+          <% new_row = ((i+1) % 6).zero? %>
+          <% if new_row %>
         </div>
-    </div>
+        <div class="row">
+          <%end%>
+          <%end%></div>
+        </div>
+      </div>
 
-    
-    <table id="matrix_table" class="table table-bordered">
+      <table id="matrix_table" class="table table-bordered">
         <thead>
-            <tr>
-                <th></th>
-                <%(langs).each do |lang|%>
-                    <th style="vertical-align:bottom;"><div class="sized rotate"><%=lang['name'].gsub(' ', '&nbsp;')%></div></th>
-                <%end%>
-            </tr>
+          <tr>
+            <th></th>
+            <%(langs).each do |lang|%>
+            <th style="vertical-align:bottom;"><div class="sized rotate"><a href="http://rosettacode.org/wiki/Category:<%=lang['url']%>"><%=lang['name'].gsub(' ', '&nbsp;')%></a></div></th>
+            <%end%>
+          </tr>
         </thead>
         <tbody>
-            <%major_tasks.each do |task|%>
-                <tr>
-                    <th><a href="http://rosettacode.org/wiki/<%=task['url']%>"><%=task['name']%></a></th>
-                    <%langs.each do |lang|%>
-                        <td>
-                            <a href="<%="/"+['Lang', lang['path'], task['path'] + '.html'].join('/')%>" data-lang="<%=lang['path']%>" data-task="<%=task['path']%>" class="code_link">
-                                <%= num = num_samples(lang, task); num.zero? ? '' : num %>
-                            </a>
-                        </td>
-                    <%end%>
-                </tr>
-            <%end%>
-        </tbody>
+          <%major_tasks.each do |task|%>
+          <tr>
+            <th><a href="http://rosettacode.org/wiki/<%=task['url']%>"><%=task['name']%></a></th>
+            <%langs.each do |lang|%>
+            <td>
+              <% num = num_samples(lang, task) %>
+              <% if num.zero? %>
+              <i class="icon-minus-sign"></i>
+              <% else %>
+              <button data-toggle="button" 
+              type="button" 
+              data-lang="<%=lang['path']%>" 
+              data-task="<%=task['path']%>" 
+              class="code_link btn">
+              <%= num %>
+            </button>
+            <% end %>
+          </td>
+          <%end%>
+        </tr>
+        <%end%>
+      </tbody>
     </table>
-</div>
+  </div>
 
-<div class="row" id="code">
-    <h2>Code Samples</h2>
-</div>
+  <div class="row" id="code">
+    <div id="code_container" class="row"></div>
+  </div>
 
-<script type="text/javascript">
-    $().ready(function() {
-        $('#matrix_table').dataTable({
-            "bPaginate": false,
-            "bLengthChange": false,
-            "bFilter": true,
-            "bSort": true,
-            "bInfo": false,
-            "bAutoWidth": false,
-            "sScrollY": "500px",
-            "aoColumnDefs": [
-                <% 
-                    non_major_indices = [] 
-                    langs.each_with_index do |l,i|
-                        unless major_langs.include?(l)
-                            non_major_indices << (i + 1) # offset one because of the first column
-                        end
-                    end
-                %>
-                {"bVisible": false, "aTargets": <%=non_major_indices.to_json%>}
-            ]
-        });
-
-        $('.code_link').click(function(event) {
-            event.preventDefault();
-            var el = $(this);
-            var lang = el.attr('data-lang');
-            var task = el.attr('data-task');
-
-            RCI.load_code(lang, task);
-        });
-
-        $('.lang_checkbox').change(function(event) {
-            var el = $(this);
-            RCI.set_lang_visibility(el.attr('data-lang-index'), el.is(':checked'))
-        });
-
-        $('.task_checkbox').change(function(event) {
-            var el = $(this);
-            RCI.set_lang_visibility(el.attr('data-lang-index'), el.is(':checked'))
-        });
+  <script type="text/javascript">
+  $().ready(function() {
+    $('#matrix_table').dataTable({
+      "bPaginate": false,
+      "bLengthChange": false,
+      "bFilter": true,
+      "bSort": false,
+      "bInfo": false,
+      "bAutoWidth": false,
+      "sScrollY": '200px',
+      "aoColumnDefs": [
+        <% 
+        non_major_indices = [] 
+        langs.each_with_index do |l,i|
+          unless major_langs.include?(l)
+            non_major_indices << (i + 1) # offset one because of the first column
+          end
+        end
+        %>
+        {"bVisible": false, "aTargets": <%=non_major_indices.to_json%>}
+      ]
     });
+
+    $(document).on('click', '.code_link', function(event) {
+      event.preventDefault();
+      var el = $(this);
+      var lang = el.attr('data-lang');
+      var task = el.attr('data-task');
+
+      RCI.toggle_code(lang, task);
+    });
+
+    $('.lang_checkbox').change(function(event) {
+      var el = $(this);
+      RCI.set_lang_visibility(el.attr('data-lang-index'), el.is(':checked'))
+    });
+
+
+    $('.task_checkbox').change(function(event) {
+      var el = $(this);
+      RCI.set_lang_visibility(el.attr('data-lang-index'), el.is(':checked'))
+    });
+
+    $(document).on("click", ".close-sample", function(){
+      var el = $(this);
+      el.parent().remove();
+    });
+  });
 </script>

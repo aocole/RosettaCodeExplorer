@@ -5,15 +5,9 @@ framework:
   runtime: ruby19
 
 processes:
-  web: ruby server/rosetta-code-explorer.rb -p $PORT #-o ${name}${target-base}
+  web: ruby server/rosetta-code-interactive.rb -p $PORT #-o ${name}${target-base}
 
-# Good to have lots of memory. Low memory seems to cause apt-get failures.
 mem: 32M
-
-# This shared fs is useful for keeping stuff you don't want to lose, like your
-# code repositories.
-services:
-  ${name}-fs: filesystem
 
 # This allows the .git/ directory to get pushed. Good for hacking on 'rosetta-code-explorer'
 # itself.
@@ -28,6 +22,4 @@ hooks:
       " >> /app/.ssh/config
     - "ssh-keyscan -t rsa github.com >> /app/.ssh/known_hosts"
   post-staging:
-    - git clone git://github.com/acmeism/RosettaCode.git $STACKATO_FILESYSTEM
-  pre-running:
-    - ln -s $STACKATO_FILESYSTEM RosettaCode
+    - git clone git://github.com/acmeism/RosettaCodeData.git RosettaCode

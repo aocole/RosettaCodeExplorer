@@ -10,11 +10,19 @@ get '/?' do
   table
 end
 
+require 'pygments.rb'
 get '/Lang/:lang/:task.:format' do
   if params[:format] == 'json'
     layout false
-    headers['Content-Type'] = 'application/json'
-    load_samples(params[:lang], params[:task]).to_json
+    load_samples(params[:lang], params[:task]).collect do |f|
+      begin
+        f[:text] = Pygments.highlight(f[:text], :lexer => params[:lang].to_s.downcase)
+      rescue MentosError => e
+        # no syntax highlighter found for this language
+        f[:text] = "<pre>#{f[:text]}</pre>"
+      end
+      f
+    end.to_json
   else
     @files = Dir.glob(ROSETTA + '/' + File.join('Lang', params[:lang], params[:task], '*')).collect{|f|f.sub(/^#{ROSETTA}/,'')}.sort
     erb :language_task
@@ -84,9 +92,13 @@ def readme
 end
 
 def load_samples(lang, task)
-  filenames = Dir.glob(File.join(ROSETTA, 'Lang', lang, task, '*'))
-  samples = filenames.collect do |filename|
-    File.read filename
+  filenames = Dir.glob(File.join(ROSETTA, 'Task', task, lang, '*'))
+  samples = filenames.sort.collect do |filename|
+    {
+      :text => File.read(filename),
+      :filename => File.basename(filename),
+      :path => filename.sub(ROSETTA, '')
+    }
   end
 end
 

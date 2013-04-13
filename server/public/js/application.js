@@ -4,28 +4,29 @@ RCI.config = {
 	base_url: '',
 }
 
-RCI.load_code = function(lang, task) {
+RCI.toggle_code = function(lang, task) {
+	var existing_samples = $('.' + lang + '.' + task);
+	if(existing_samples.length > 0) {
+		existing_samples.remove();
+		return;
+	}
 	$.getJSON([RCI.config.base_url, 'Lang', lang, task + '.json'].join('/'), function(samples) {
-		var existing_samples = $('.' + lang + '.' + task);
-		if(existing_samples.length > 0) {
-			existing_samples.remove();
-			return;
-		}
 		RCI.insert_code(lang, task, samples);
 	});
 }
 
 RCI.insert_code = function(lang, task, samples) {
+	var column = $('<div class="span4 ' + lang + ' ' + task +'"></div>');
+	$('#code_container').append(column);
+	column.append('<i style="float:right" class="close-sample icon-remove"></i>');
+	column.append('<h4>' + lang + ': <br/>' + task + '</h4>');
 	for (sample in samples) {
-		var codetainer = '#code' + sample;
-		if($(codetainer).length == 0) {
-			$('#code').append('<div class="row" id="' + codetainer.replace('#', '') + '"></div>');
-		}
-		$(codetainer).append('\
-			<div class="span4 ' + lang + ' ' + task +'">\
-				<h3>' + lang + ': ' + task + ' sample ' + sample + '</h3>\
-				<pre class="pre-scrollable">' + samples[sample] + '</pre>\
-			</div>\
+		var row = $('<div class="row"></div>');
+		column.append(row);
+		row.append('\
+			<i style="float:right" class="close-sample icon-remove"></i>\
+			<h4><a href="https://raw.github.com/acmeism/RosettaCodeData/master' + samples[sample].path +'">Sample ' + (Number(sample) + 1) + '</a></h4>\
+			' + samples[sample].text + '\
 		');
 	}
 }
