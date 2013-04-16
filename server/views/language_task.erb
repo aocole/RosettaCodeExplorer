@@ -1,8 +1,0 @@
-<p>
-	<%=task_desc params[:task]%>
-</p>
-<ul>
-	<%@files.each do |file|%>
-		<li><a href="<%=file%>"><%=File.basename file%></a></li>
-	<%end%>
-</ul>

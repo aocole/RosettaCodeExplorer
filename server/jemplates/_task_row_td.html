@@ -1,0 +1,11 @@
+[% IF num == 0 %]
+  <i class="icon-minus-sign"></i>
+[% ELSE %]
+  <button data-toggle="button" 
+    type="button" 
+    data-lang="[% lang.path %]" 
+    data-task="[% task.path %]" 
+    class="code_link btn">
+    [% num %]
+  </button>
+[% END %]

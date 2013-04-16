@@ -8,7 +8,7 @@ ROSETTA = HOME + '/RosettaCode'
 
 require 'rdiscount'
 get '/?' do
-  table
+  erb :table
 end
 
 require 'pygments.rb'
@@ -25,19 +25,31 @@ get '/Lang/:lang/:task.:format' do
       f
     end.to_json
   else
-    @files = Dir.glob(ROSETTA + '/' + File.join('Lang', params[:lang], params[:task], '*')).collect{|f|f.sub(/^#{ROSETTA}/,'')}.sort
-    erb :language_task
+    404
   end
 end
 
-get '/js/minor_tasks.js' do
-  minor_tasks = tasks - major_tasks
-  json = "RCI.minor_tasks = " << minor_tasks.collect do |task|
-    task['counts'] = langs.collect do |lang|
-      num_samples(lang, task)
-    end
-    task
-  end.to_json
+get '/js/tasks.js' do
+  json = ''
+  json << "//lang name defs\n"
+  accumulator = 'a'
+  langs.each do |lang|
+    var_name = "l_#{accumulator}"
+    lang['var_name'] = var_name
+    json << 'var ' + var_name + ' = ' + lang['path'].to_json + ';'
+    accumulator.next!
+  end
+  json << "RCI.tasks = ["
+  json << sorted_tasks.collect do |task|
+    task_json = '['
+    task_json << task.to_json << ','
+    task_json << langs.collect do |lang|
+      '[' << lang['var_name'] << ',' << num_samples(lang, task).to_s << ']'
+    end.join(",")
+    task_json << ']'
+    task_json
+  end.join(",\n")
+  json << '];'
   headers['Content-Type'] = 'text/javascript'
   return json
 end
@@ -57,18 +69,22 @@ def major_langs
     langs.each do |lang|
       lang['size'] = Dir.entries(File.join(ROSETTA, 'Lang', lang['path'])).size - 2
     end
-    langs.sort{|a,b|b['size'] <=> a['size']}[0..19]
+    langs.sort{|a,b|b['size'] <=> a['size']}[0..5]
   end
 end
 
 def major_tasks
-  @top_tasks ||= begin
+  sorted_tasks[0..3]
+end
+
+def sorted_tasks
+  @sorted_tasks ||= begin 
     tasks.each do |task|
       task['size'] = Dir.entries(File.join(ROSETTA, 'Task', task['path'])).size - 2
     end
-    tasks.sort{|a,b|b['size'] <=> a['size']}[0..19]
+    tasks.sort{|a,b|b['size'] <=> a['size']}
   end
-end
+end  
 
 def tasks
   @tasks ||= begin
@@ -85,10 +101,6 @@ def info(type, name)
   })
   wiki.to_html
 end
-
-def table
-  erb :table
-end 
 
 def readme
   filename = File.join(ROSETTA, 'README.md')

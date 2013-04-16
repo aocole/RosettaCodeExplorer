@@ -1,0 +1,11 @@
+<tr>
+  <th>
+    [% PROCESS '_task_row_th.html' %]
+  </th>
+
+  [% FOREACH lang IN langs %]
+    <td>
+      [% PROCESS '_task_row_td.html' %]
+    </td>
+  [% END %]
+</tr>

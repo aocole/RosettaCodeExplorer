@@ -43,3 +43,12 @@ RCI.set_task_visibility = function(task_index, visible) {
     return visible;
 }
 
+RCI.add_minor_tasks = function() {
+	var table = $('#matrix_table').dataTable();
+	$.each(RCI.minor_tasks, function(i, task){
+		task.counts.unshift(task.name);
+		table.fnAddData(task.counts, false);
+	});
+	table.fnDraw();
+}
+
